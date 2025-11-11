@@ -4,7 +4,6 @@ pipeline {
     environment {
         SONARQUBE_SERVER = 'SonarQube'
         SONAR_HOST_URL = 'http://10.30.212.28:9000'
-        SONAR_AUTH_TOKEN = credentials('sonar-token') // ID de tu credencial en Jenkins
     }
 
     stages {
@@ -16,13 +15,14 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv("${SONARQUBE_SERVER}") {
+                // Usar withCredentials para pasar el token
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_AUTH_TOKEN')]) {
                     sh """
-                        sonar-scanner \
+                        ${tool 'SonarScanner'}/bin/sonar-scanner \
                         -Dsonar.projectKey=testPipeLine \
                         -Dsonar.sources=vulnerabilities \
                         -Dsonar.host.url=${env.SONAR_HOST_URL} \
-                        -Dsonar.login=${env.SONAR_AUTH_TOKEN} \
+                        -Dsonar.login=${SONAR_AUTH_TOKEN} \
                         -Dsonar.php.version=8.0
                     """
                 }
@@ -38,3 +38,4 @@ pipeline {
         }
     }
 }
+
