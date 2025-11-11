@@ -18,14 +18,13 @@ pipeline {
                 withSonarQubeEnv("${SONARQUBE_SERVER}") {
                     withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_AUTH_TOKEN')]) {
                         sh """
-                            echo "Token utilizado: \$SONAR_AUTH_TOKEN"
                             sonar-scanner \\
-                            -Dsonar.projectKey=tu_proyecto \\
-                            -Dsonar.sources=. \\
-                            -Dsonar.host.url=${SONAR_HOST_URL} \\
-                            -Dsonar.login=\$SONAR_AUTH_TOKEN \\
-                            -Dsonar.inclusions=**/*.php,**/*.js,**/*.py \\
-                            -Dsonar.exclusions=vendor/**,node_modules/**
+                                -Dsonar.projectKey=tu_proyecto \\
+                                -Dsonar.sources=. \\
+                                -Dsonar.host.url=${SONAR_HOST_URL} \\
+                                -Dsonar.login=\$SONAR_AUTH_TOKEN \\
+                                -Dsonar.inclusions=**/*.php,**/*.py \\
+                                -Dsonar.exclusions=vendor/**,node_modules/**,**/*.js
                         """
                     }
                 }
