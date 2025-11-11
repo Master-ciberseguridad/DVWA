@@ -15,19 +15,21 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                // Usar withCredentials para pasar el token
                 withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_AUTH_TOKEN')]) {
-                    sh """
-                        ${tool 'SonarScanner'}/bin/sonar-scanner \
-                        -Dsonar.projectKey=testPipeLine \
-                        -Dsonar.sources=vulnerabilities \
-                        -Dsonar.host.url=${env.SONAR_HOST_URL} \
-                        -Dsonar.login=${SONAR_AUTH_TOKEN} \
-                        -Dsonar.php.version=8.0
-                    """
+                    withSonarQubeEnv('SonarQube') {
+                        sh """
+                            ${tool 'SonarScanner'}/bin/sonar-scanner \
+                            -Dsonar.projectKey=testPipeLine \
+                            -Dsonar.sources=vulnerabilities \
+                            -Dsonar.host.url=${env.SONAR_HOST_URL} \
+                            -Dsonar.login=${SONAR_AUTH_TOKEN} \
+                            -Dsonar.php.version=8.0
+                        """
+                    }
                 }
             }
         }
+
 
         stage('Quality Gate') {
             steps {
