@@ -2,26 +2,25 @@ pipeline {
     agent any
 
     environment {
-        // Nombre del servidor SonarQube configurado en Jenkins
+        // Variables normales
         SONARQUBE_SERVER = 'SonarQube'
         SONAR_HOST_URL = 'http://10.30.212.28:9000'
     }
 
     stages {
+
         stage('Checkout') {
             steps {
-                // Clonar el código fuente desde el repositorio
+                // Clonar el código fuente
                 checkout scm
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                // Usamos la credencial como Secret Text
+                // Usamos withCredentials para inyectar el token Secret Text
                 withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_AUTH_TOKEN')]) {
-                    // Configurar entorno SonarQube
                     withSonarQubeEnv("${SONARQUBE_SERVER}") {
-                        // Ejecutar análisis con SonarScanner
                         sh """
                             sonar-scanner \\
                             -Dsonar.projectKey=tu_proyecto \\
@@ -46,10 +45,10 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline terminado con éxito.'
+            echo "Pipeline completado exitosamente."
         }
         failure {
-            echo 'Pipeline falló. Revisa los logs para más detalles.'
+            echo "Pipeline falló. Revisa los logs para más detalles."
         }
     }
 }
