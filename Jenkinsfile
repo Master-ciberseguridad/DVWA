@@ -4,8 +4,6 @@ pipeline {
     environment {
         // Nombre del servidor SonarQube configurado en Jenkins
         SONARQUBE_SERVER = 'SonarQube'
-        SONAR_HOST_URL = 'http://10.30.212.28:9000' // Cambiado
-        SONAR_AUTH_TOKEN = credentials('sqa_5bf3b7a6d3e3b37dac81a5fd73e4bc62217b620e')
         // Agregar sonar-scanner al PATH
         PATH = "/opt/sonar-scanner/bin:${env.PATH}"
     }
@@ -23,7 +21,7 @@ pipeline {
                 sh "${tool 'SonarScanner'}/bin/sonar-scanner \
                       -Dsonar.projectKey=testPipeLine \
                       -Dsonar.sources=vulnerabilities \
-                      -Dsonar.host.url=${env.SONAR_HOST_URL} \
+                      -Dsonar.host.url='http://10.30.212.28:9000' \
                       -Dsonar.php.version=8.0"
             }
         }
