@@ -23,7 +23,9 @@ pipeline {
                             -Dsonar.projectKey=tu_proyecto \\
                             -Dsonar.sources=. \\
                             -Dsonar.host.url=${SONAR_HOST_URL} \\
-                            -Dsonar.login=\$SONAR_AUTH_TOKEN
+                            -Dsonar.login=\$SONAR_AUTH_TOKEN \\
+                            -Dsonar.inclusions=**/*.php,**/*.js,**/*.py \\
+                            -Dsonar.exclusions=vendor/**,node_modules/**
                         """
                     }
                 }
