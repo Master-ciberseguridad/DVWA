@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        SONAR_AUTH_TOKEN = credentials('sonar-user-token') // Token de usuario administrador
+        SONAR_AUTH_TOKEN = credentials('sonarQ-token') // Token de usuario administrador
     }
 
     stages {
