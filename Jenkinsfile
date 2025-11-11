@@ -1,56 +1,35 @@
-pipeline {
-    agent any
-
-    stages {
-        stage('Declarative: Checkout SCM') {
-            steps {
-                checkout scm
+pipeline { 
+    agent any environment { 
+    // Nombre del servidor SonarQube configurado en Jenkins 
+    SONARQUBE_SERVER = 'SonarQube' 
+    SONAR_HOST_URL = 'http://10.30.212.28:9000' 
+        SONAR_AUTH_TOKEN = credentials('sqa_5bf3b7a6d3e3b37dac81a5fd73e4bc62217b620e') 
+        // Agregar sonar-scanner al PATH PATH = "/opt/sonar-scanner/bin:${env.PATH}" } 
+        stages { 
+            stage('Checkout') { 
+                steps {
+                    // Clonar el código fuente desde el repositorio checkout scm 
+                } 
             }
-        }
-
-        stage('Checkout') {
-            steps {
-                git branch: 'master',
-                    url: 'https://github.com/Master-ciberseguridad/DVWA'
-            }
-        }
-
-        stage('SonarQube Analysis') {
-            steps {
-                // Se asegura que la variable SONAR_AUTH_TOKEN exista
-                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_AUTH_TOKEN')]) {
-                    withSonarQubeEnv('SonarQube') {
-                        sh """
-                            sonar-scanner \
-                                -Dsonar.projectKey=testPipeLine \
-                                -Dsonar.sources=vulnerabilities \
-                                -Dsonar.host.url=${env.SONAR_HOST_URL} \
-                                -Dsonar.login=${SONAR_AUTH_TOKEN} \
-                                -Dsonar.php.version=8.0
-                        """
+            stage('SonarQube Analysis') { 
+                steps { 
+                    // Configurar el entorno de SonarQube 
+                    withSonarQubeEnv("${SONARQUBE_SERVER}") { 
+                        // Ejecutar el análisis con SonarScanner 
+                        sh ''' sonar-scanner \ 
+                        -Dsonar.projectKey=testPipeLine \ 
+                        -Dsonar.sources=vulnerabilities \ 
+                        -Dsonar.php.version=8.0 ''' 
+                    } 
+                } 
+            } 
+            stage('Quality Gate') { 
+                steps { 
+                    // Esperar el resultado del Quality Gate timeout(time: 1, unit: 'HOURS') 
+                    { 
+                        waitForQualityGate abortPipeline: true 
                     }
                 }
             }
         }
-
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 1, unit: 'HOURS') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
     }
-
-    post {
-        success {
-            echo 'Pipeline finalizado con éxito.'
-        }
-        failure {
-            echo 'Pipeline falló. Revisa los logs para más detalles.'
-        }
-        always {
-            echo 'Pipeline terminado.'
-        }
-    }
-}
