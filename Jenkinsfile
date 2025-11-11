@@ -9,7 +9,8 @@ pipeline {
     stages { 
         stage('Checkout') { 
             steps {
-                // Clonar el código fuente desde el repositorio checkout scm                 
+                // Clonar el código fuente desde el repositorio 
+                checkout scm                 
             } 
         }
         stage('SonarQube Analysis') { 
