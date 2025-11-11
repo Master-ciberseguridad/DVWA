@@ -4,8 +4,8 @@ pipeline {
     environment {
         // Nombre del servidor SonarQube configurado en Jenkins
         SONARQUBE_SERVER = 'SonarQube'
-        // Agregar sonar-scanner al PATH
-        PATH = "/opt/sonar-scanner/bin:${env.PATH}"
+        SONAR_HOST_URL = 'http://10.30.212.28:9000'
+    SONAR_AUTH_TOKEN = credentials('sonar-token')
     }
 
     stages {
@@ -17,12 +17,14 @@ pipeline {
         }
         stage('SonarQube Analysis') {
             steps {
-                // Configurar el entorno de SonarQube
-                sh "${tool 'SonarScanner'}/bin/sonar-scanner \
-                      -Dsonar.projectKey=testPipeLine \
-                      -Dsonar.sources=vulnerabilities \
-                      -Dsonar.host.url='http://10.30.212.28:9000' \
-                      -Dsonar.php.version=8.0"
+                // Configurar el entorno de SonarQube 
+                withSonarQubeEnv("${SONARQUBE_SERVER}") { 
+                    // Ejecutar el análisis con SonarScanner 
+                    sh ''' sonar-scanner \ 
+                    -Dsonar.projectKey=testPipeLine \ 
+                    -Dsonar.sources=vulnerabilities \ 
+                    -Dsonar.php.version=8.0 
+                    '''
             }
         }
         stage('Quality Gate') {
