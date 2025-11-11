@@ -15,9 +15,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                // Aquí usamos withCredentials para inyectar el token como variable de entorno
                 withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_AUTH_TOKEN')]) {
-                    // El withSonarQubeEnv debe estar **dentro** del withCredentials
                     withSonarQubeEnv("${SONARQUBE_SERVER}") {
                         sh """
                             echo "Token utilizado: \$SONAR_AUTH_TOKEN"
@@ -38,15 +36,6 @@ pipeline {
                     waitForQualityGate abortPipeline: true
                 }
             }
-        }
-    }
-
-    post {
-        success {
-            echo "Pipeline completado exitosamente."
-        }
-        failure {
-            echo "Pipeline falló. Revisa los logs para más detalles."
         }
     }
 }
