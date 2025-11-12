@@ -20,7 +20,7 @@ pipeline {
                         sh """
                             echo "Token utilizado: ${SONAR_AUTH_TOKEN}"
                             sonar-scanner \\
-                            -Dsonar.projectKey=tu_proyecto \\
+                            -Dsonar.projectKey=Proyecto_grupo5 \\
                             -Dsonar.sources=. \\
                             -Dsonar.host.url=${SONAR_HOST_URL} \\
                             -Dsonar.login=${SONAR_AUTH_TOKEN}
